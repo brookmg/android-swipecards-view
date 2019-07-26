@@ -73,7 +73,6 @@
         android:text="restart"
         />
   </LinearLayout>
-  <!--<include layout="@layout/buttons" />-->
 
 </LinearLayout>
 

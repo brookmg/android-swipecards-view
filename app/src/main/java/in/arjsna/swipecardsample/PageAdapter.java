@@ -6,6 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+
+import androidx.annotation.NonNull;
 import java.util.ArrayList;
 
 /**
@@ -21,7 +23,7 @@ public class PageAdapter extends ArrayAdapter<Card> {
     this.layoutInflater = LayoutInflater.from(context);
   }
 
-  @Override public View getView(int position, View convertView, ViewGroup parent) {
+  @NonNull @Override public View getView(int position, View convertView, @NonNull ViewGroup parent) {
     Card card = cards.get(position);
     View view = layoutInflater.inflate(R.layout.page_item, parent, false);
     ((ImageView) view.findViewById(R.id.card_image)).setImageResource(card.imageId);

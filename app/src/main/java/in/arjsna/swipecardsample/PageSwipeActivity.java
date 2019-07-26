@@ -1,7 +1,8 @@
 package in.arjsna.swipecardsample;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -13,12 +14,12 @@ public class PageSwipeActivity extends AppCompatActivity {
   private ArrayList<Card> al;
   private PageAdapter arrayAdapter;
 
-  @BindView(R.id.page_swipe_view) SwipePageView flingContainer;
+  private SwipePageView flingContainer;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_page_swipe);
-    ButterKnife.bind(this);
+    flingContainer = findViewById(R.id.page_swipe_view);
 
     al = new ArrayList<>();
     getDummyData(al);

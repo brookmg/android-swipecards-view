@@ -1,11 +1,12 @@
 package in.arjsna.swipecardsample;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -24,14 +25,14 @@ public class FragmentDemo extends Fragment {
   private CardsAdapter arrayAdapter;
   private int i;
 
-  @BindView(R.id.card_stack_view)
-  SwipeCardView swipeCardView;
+  private SwipeCardView swipeCardView;
 
-  @Nullable @Override
+  @Nullable
+  @Override
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
     View mRootView = inflater.inflate(R.layout.fragment_demo, container, false);
-    ButterKnife.bind(this, mRootView);
+    swipeCardView = mRootView.findViewById(R.id.card_stack_view);
 
     al = new ArrayList<>();
     getDummyData(al);
