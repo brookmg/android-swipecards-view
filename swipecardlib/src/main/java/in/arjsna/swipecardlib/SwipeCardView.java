@@ -15,7 +15,6 @@ import android.widget.FrameLayout;
 
 public class SwipeCardView extends BaseFlingAdapterView {
 
-
     private static final double SCALE_OFFSET = 0.04;
 
     private static final float TRANS_OFFSET = 45;
@@ -53,6 +52,8 @@ public class SwipeCardView extends BaseFlingAdapterView {
     private boolean mInLayout = false;
 
     private View mActiveCard = null;
+
+    private View mConvertView = null;   // we have the same structure of views stacking up together so we can keep this
 
     private OnItemClickListener mOnItemClickListener;
 
@@ -135,7 +136,6 @@ public class SwipeCardView extends BaseFlingAdapterView {
             return;
         }
 
-
         mInLayout = true;
 
         if (adapterCount == 0) {
@@ -189,7 +189,15 @@ public class SwipeCardView extends BaseFlingAdapterView {
             LAST_OBJECT_IN_STACK = --viewStack;
             return;
         }
-        View newUnderChild = mAdapter.getView(startingIndex, null, this);
+        View newUnderChild;
+
+//        if (mConvertView == null) {
+            newUnderChild = mAdapter.getView(startingIndex, null, this);
+//            mConvertView = newUnderChild;
+//        } else {
+//            newUnderChild = mAdapter.getView(startingIndex, mConvertView, this);
+//        }
+
         if (newUnderChild != null && newUnderChild.getVisibility() != GONE) {
             makeAndAddView(newUnderChild, true);
             LAST_OBJECT_IN_STACK = viewStack;
@@ -232,7 +240,6 @@ public class SwipeCardView extends BaseFlingAdapterView {
             cleanupLayoutState(child);
         }
 
-
         int w = child.getMeasuredWidth();
         int h = child.getMeasuredHeight();
 
@@ -253,10 +260,10 @@ public class SwipeCardView extends BaseFlingAdapterView {
                 childLeft = (getWidth() + getPaddingLeft() - getPaddingRight()  - w) / 2 +
                         lp.leftMargin - lp.rightMargin;
                 break;
-            case Gravity.END:
-                childLeft = getWidth() + getPaddingRight() - w - lp.rightMargin;
-                break;
-            case Gravity.START:
+//            case Gravity.END:
+//                childLeft = getWidth() + getPaddingRight() - w - lp.rightMargin;
+//                break;
+//            case Gravity.START:
             default:
                 childLeft = getPaddingLeft() + lp.leftMargin;
                 break;
@@ -286,6 +293,60 @@ public class SwipeCardView extends BaseFlingAdapterView {
         child.setTranslationY(TRANS_OFFSET * (MAX_VISIBLE - childcount) - absScrollDis * TRANS_OFFSET);
     }
 
+    FlingCardListener.FlingListener flingListener = new FlingCardListener.FlingListener() {
+        @Override
+        public void onCardExited() {
+            mActiveCard = null;
+            START_STACK_FROM ++;
+            currentAdapterCount --;
+            post(() -> requestLayout());
+        }
+
+        @Override
+        public void leftExit(Object dataObject) {
+            mFlingListener.onCardExitLeft(dataObject);
+        }
+
+        @Override
+        public void rightExit(Object dataObject) {
+            mFlingListener.onCardExitRight(dataObject);
+        }
+
+        @Override
+        public void onClick(Object dataObject) {
+            if(mOnItemClickListener!=null)
+                mOnItemClickListener.onItemClicked(0, dataObject);
+
+        }
+
+        @Override
+        public void onScroll(float scrollProgressPercent) {
+            mFlingListener.onScroll(scrollProgressPercent);
+            int childCount = getChildCount() - 1;
+            if(childCount < MAX_VISIBLE){
+                while (childCount > 0) {
+                    relayoutChild(getChildAt(childCount - 1), Math.abs(scrollProgressPercent), childCount);
+                    childCount--;
+                }
+            } else {
+                while (childCount > 1) {
+                    relayoutChild(getChildAt(childCount - 1), Math.abs(scrollProgressPercent), childCount - 1);
+                    childCount--;
+                }
+            }
+        }
+
+        @Override
+        public void topExit(Object dataObject) {
+            mFlingListener.onCardExitTop(dataObject);
+        }
+
+        @Override
+        public void bottomExit(Object dataObject) {
+            mFlingListener.onCardExitBottom(dataObject);
+        }
+    };
+
     /**
     *  Set the top view and add the fling listener
     */
@@ -294,59 +355,7 @@ public class SwipeCardView extends BaseFlingAdapterView {
             mActiveCard = getChildAt(LAST_OBJECT_IN_STACK);
             if (mActiveCard != null) {
                 flingCardListener = new FlingCardListener(this, mActiveCard, mAdapter.getItem(START_STACK_FROM),
-                ROTATION_DEGREES, new FlingCardListener.FlingListener() {
-                    @Override
-                    public void onCardExited() {
-                        mActiveCard = null;
-                        START_STACK_FROM ++;
-                        currentAdapterCount --;
-                        requestLayout();
-                    }
-
-                    @Override
-                    public void leftExit(Object dataObject) {
-                        mFlingListener.onCardExitLeft(dataObject);
-                    }
-
-                    @Override
-                    public void rightExit(Object dataObject) {
-                        mFlingListener.onCardExitRight(dataObject);
-                    }
-
-                    @Override
-                    public void onClick(Object dataObject) {
-                        if(mOnItemClickListener!=null)
-                            mOnItemClickListener.onItemClicked(0, dataObject);
-
-                    }
-
-                    @Override
-                    public void onScroll(float scrollProgressPercent) {
-                        mFlingListener.onScroll(scrollProgressPercent);
-                        int childCount = getChildCount() - 1;
-                        if(childCount < MAX_VISIBLE){
-                            while (childCount > 0) {
-                                relayoutChild(getChildAt(childCount - 1), Math.abs(scrollProgressPercent), childCount);
-                                childCount--;
-                            }
-                        } else {
-                            while (childCount > 1) {
-                                relayoutChild(getChildAt(childCount - 1), Math.abs(scrollProgressPercent), childCount - 1);
-                                childCount--;
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void topExit(Object dataObject) {
-                        mFlingListener.onCardExitTop(dataObject);
-                    }
-
-                    @Override
-                    public void bottomExit(Object dataObject) {
-                        mFlingListener.onCardExitBottom(dataObject);
-                    }
-                });
+                ROTATION_DEGREES, flingListener);
 
                 mActiveCard.setOnTouchListener(flingCardListener);
             }

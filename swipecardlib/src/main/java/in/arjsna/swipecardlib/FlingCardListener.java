@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 
 
@@ -225,7 +226,7 @@ public class FlingCardListener implements View.OnTouchListener {
             aDownTouchY = 0;
             frame.animate()
                     .setDuration(200)
-                    .setInterpolator(new OvershootInterpolator(1.5f))
+                    .setInterpolator(new DecelerateInterpolator(1.5f))
                     .x(objectX)
                     .y(objectY)
                     .rotation(0);
