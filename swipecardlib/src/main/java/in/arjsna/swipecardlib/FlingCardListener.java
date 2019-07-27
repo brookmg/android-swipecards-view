@@ -12,6 +12,8 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 
+import static in.arjsna.swipecardlib.FlingDirection.FLING_DIRECTION_ALL;
+
 
 public class FlingCardListener implements View.OnTouchListener {
 
@@ -74,12 +76,17 @@ public class FlingCardListener implements View.OnTouchListener {
 
     private float MAX_COS = (float) Math.cos(Math.toRadians(45));
 
+    private @FlingDirection int flingDirection;
 
     public FlingCardListener(SwipeCardView parent, View frame, Object itemAtPosition, FlingListener flingListener) {
         this(parent, frame, itemAtPosition, 15f, flingListener);
     }
 
     public FlingCardListener(SwipeCardView parent, View frame, Object itemAtPosition, float rotation_degrees, FlingListener flingListener) {
+        this (parent, frame, itemAtPosition, rotation_degrees, flingListener, FLING_DIRECTION_ALL);
+    }
+
+    public FlingCardListener(SwipeCardView parent, View frame, Object itemAtPosition, float rotation_degrees, FlingListener flingListener, @FlingDirection int flingDirection) {
         super();
         this.parentView = parent;
         this.frame = frame;
@@ -98,8 +105,8 @@ public class FlingCardListener implements View.OnTouchListener {
         this.RECT_BOTTOM = new Rect((int) Math.max(frame.getLeft(), leftBorder()), (int) bottomBorder(), (int) Math.min(frame.getRight(), rightBorder()), parentHeight);
         this.RECT_LEFT = new Rect(0, (int) Math.max(frame.getTop(), topBorder()), (int) leftBorder(), (int) Math.min(frame.getBottom(), bottomBorder()));
         this.RECT_RIGHT = new Rect((int) rightBorder(), (int) Math.max(frame.getTop(), topBorder()), parentWidth, (int) Math.min(frame.getBottom(), bottomBorder()));
+        this.flingDirection = flingDirection;
     }
-
 
     public boolean onTouch(View view, MotionEvent event) {
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
@@ -238,26 +245,45 @@ public class FlingCardListener implements View.OnTouchListener {
         return false;
     }
 
-
     private boolean movedBeyondLeftBorder() {
+        if (flingDirection != FlingDirection.FLING_DIRECTION_LEFT &&
+            flingDirection != FlingDirection.FLING_DIRECTION_HORIZONTAL &&
+            flingDirection != FLING_DIRECTION_ALL
+        ) return false; // We can't fling to the left side.
+
         int centerX = (int) (frame.getX() + halfWidth);
         int centerY = (int) (frame.getY() + halfHeight);
         return (RECT_LEFT.contains(centerX, centerY) || (centerX < RECT_LEFT.left && RECT_LEFT.contains(0, centerY)));
     }
 
     private boolean movedBeyondRightBorder() {
+        if (flingDirection != FlingDirection.FLING_DIRECTION_RIGHT &&
+                flingDirection != FlingDirection.FLING_DIRECTION_HORIZONTAL &&
+                flingDirection != FLING_DIRECTION_ALL
+        ) return false; // We can't fling to the right side.
+
         int centerX = (int) (frame.getX() + halfWidth);
         int centerY = (int) (frame.getY() + halfHeight);
         return (RECT_RIGHT.contains(centerX, centerY) || (centerX > RECT_RIGHT.right && RECT_RIGHT.contains(RECT_RIGHT.left, centerY)));
     }
 
     private boolean movedBeyondBottomBorder() {
+        if (flingDirection != FlingDirection.FLING_DIRECTION_DOWN &&
+                flingDirection != FlingDirection.FLING_DIRECTION_VERTICAL &&
+                flingDirection != FLING_DIRECTION_ALL
+        ) return false; // We can't fling to the bottom side.
+
         int centerX = (int) (frame.getX() + halfWidth);
         int centerY = (int) (frame.getY() + halfHeight);
         return (RECT_BOTTOM.contains(centerX, centerY) || (centerY > RECT_BOTTOM.bottom && RECT_BOTTOM.contains(centerX, RECT_BOTTOM.top)));
     }
 
     private boolean movedBeyondTopBorder() {
+        if (flingDirection != FlingDirection.FLING_DIRECTION_UP &&
+                flingDirection != FlingDirection.FLING_DIRECTION_VERTICAL &&
+                flingDirection != FLING_DIRECTION_ALL
+        ) return false; // We can't fling to the top side.
+
         int centerX = (int) (frame.getX() + halfWidth);
         int centerY = (int) (frame.getY() + halfHeight);
         return (RECT_TOP.contains(centerX, centerY) || (centerY < RECT_TOP.top && RECT_TOP.contains(centerX, 0)));

@@ -10,6 +10,15 @@
         <attr name="right_swipe_detect" format="boolean"/>
         <attr name="top_swipe_detect" format="boolean"/>
         <attr name="bottom_swipe_detect" format="boolean"/>
+        <attr name="card_swipe_direction" format="enum">
+            <enum name="up" value="0" />
+            <enum name="down" value="1" />
+            <enum name="left" value="2" />
+            <enum name="right" value="3" />
+            <enum name="horizontal" value="4" />
+            <enum name="vertical" value="5" />
+            <enum name="all" value="6" />
+        </attr>
     </declare-styleable>
 
     <declare-styleable name="SwipePageView">

@@ -11,7 +11,10 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Adapter;
+import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
+
+import static in.arjsna.swipecardlib.FlingDirection.FLING_DIRECTION_ALL;
 
 public class SwipeCardView extends BaseFlingAdapterView {
 
@@ -65,6 +68,7 @@ public class SwipeCardView extends BaseFlingAdapterView {
 
     private int adapterCount = 0;
 
+    private @FlingDirection int flingDirection = FLING_DIRECTION_ALL;
 
     public SwipeCardView(Context context) {
         this(context, null);
@@ -85,6 +89,7 @@ public class SwipeCardView extends BaseFlingAdapterView {
         DETECT_RIGHT_SWIPE = a.getBoolean(R.styleable.SwipeCardView_right_swipe_detect, true);
         DETECT_BOTTOM_SWIPE = a.getBoolean(R.styleable.SwipeCardView_bottom_swipe_detect, true);
         DETECT_TOP_SWIPE = a.getBoolean(R.styleable.SwipeCardView_top_swipe_detect, true);
+        flingDirection = a.getInt(R.styleable.SwipeCardView_card_swipe_direction, flingDirection);
         INITIAL_MAX_VISIBLE = MAX_VISIBLE;
         a.recycle();
     }
@@ -208,7 +213,6 @@ public class SwipeCardView extends BaseFlingAdapterView {
         CURRENT_TRANSY_VAL = 0;
         CURRENT_SCALE_VAL = 0;
     }
-
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     private void makeAndAddView(View child, boolean isBase) {
@@ -355,7 +359,7 @@ public class SwipeCardView extends BaseFlingAdapterView {
             mActiveCard = getChildAt(LAST_OBJECT_IN_STACK);
             if (mActiveCard != null) {
                 flingCardListener = new FlingCardListener(this, mActiveCard, mAdapter.getItem(START_STACK_FROM),
-                ROTATION_DEGREES, flingListener);
+                ROTATION_DEGREES, flingListener, flingDirection);
 
                 mActiveCard.setOnTouchListener(flingCardListener);
             }
