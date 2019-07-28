@@ -96,22 +96,20 @@ public class SwipeCardView extends BaseFlingAdapterView {
 
 
     /**
+     * [! REMOVED ]
      * A shortcut method to set both the listeners and the adapter.
-     *
-     * @param context The activity context which extends OnCardFlingListener, OnItemClickListener or both
-     * @param mAdapter The adapter you have to set.
      */
-    public void init(final Context context, Adapter mAdapter) {
-        if(context instanceof OnCardFlingListener) {
-            mFlingListener = (OnCardFlingListener) context;
-        }else{
-            throw new RuntimeException("Activity does not implement SwipeFlingAdapterView.OnCardFlingListener");
-        }
-        if(context instanceof OnItemClickListener){
-            mOnItemClickListener = (OnItemClickListener) context;
-        }
-        setAdapter(mAdapter);
-    }
+//    public void init(final Context context, Adapter mAdapter) {
+//        if(context instanceof OnCardFlingListener) {
+//            mFlingListener = (OnCardFlingListener) context;
+//        }else{
+//            throw new RuntimeException("Activity does not implement SwipeFlingAdapterView.OnCardFlingListener");
+//        }
+//        if(context instanceof OnItemClickListener){
+//            mOnItemClickListener = (OnItemClickListener) context;
+//        }
+//        setAdapter(mAdapter);
+//    }
 
  	@Override
     public View getSelectedView() {
@@ -448,13 +446,13 @@ public class SwipeCardView extends BaseFlingAdapterView {
         void onItemClicked(int itemPosition, Object dataObject);
     }
 
-    public interface OnCardFlingListener {
-        void onCardExitLeft(Object dataObject);
-        void onCardExitRight(Object dataObject);
-        void onAdapterAboutToEmpty(int itemsInAdapter);
-        void onScroll(float scrollProgressPercent);
-        void onCardExitTop(Object dataObject);
-        void onCardExitBottom(Object dataObject);
+    public static abstract class OnCardFlingListener {
+        public void onCardExitLeft(Object dataObject){}
+        public void onCardExitRight(Object dataObject){}
+        public void onAdapterAboutToEmpty(int itemsInAdapter){}
+        public void onScroll(float scrollProgressPercent){}
+        public void onCardExitTop(Object dataObject){}
+        public void onCardExitBottom(Object dataObject){}
     }
 
     public void throwLeft() {
