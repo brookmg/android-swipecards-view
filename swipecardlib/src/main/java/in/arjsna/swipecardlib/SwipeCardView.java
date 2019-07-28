@@ -364,6 +364,10 @@ public class SwipeCardView extends BaseFlingAdapterView {
         }
     }
 
+    public View getmActiveCard() {
+        return mActiveCard;
+    }
+
     public void restart(){
         currentAdapterCount = mAdapter.getCount();
         adapterCount = currentAdapterCount;
